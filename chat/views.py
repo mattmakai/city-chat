@@ -14,7 +14,7 @@ def token(request):
     identity = 'matt'
     endpoint_id = "NeighborChat:{0}:{1}".format(device_id,identity)
     token = AccessToken(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_API_KEY,
-                        settings.TWILIO_API_SECRET, 3600, identity)
+                        settings.TWILIO_API_SECRET, identity)
     grant = IpMessagingGrant()
     grant.service_sid = settings.TWILIO_IPM_SERVICE_SID
     grant.endpoint_id = endpoint_id

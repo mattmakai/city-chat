@@ -1,7 +1,7 @@
 function initialize() {
   var mapCanvas = document.getElementById('map');
-  var latLng = new google.maps.LatLng(document.getElementById('latitude').value, 
-                                      document.getElementById('longitude').value);
+  var latLng = new google.maps.LatLng(document.getElementById('lat').value, document.getElementById('long').value);
+
   var mapOptions = {
     center: latLng,
     zoom: 16,
@@ -29,6 +29,8 @@ function initialize() {
 function successFunction(position) {
   var lat = position.coords.latitude;
   var lon = position.coords.longitude;
+  document.getElementById('lat').value = lat;
+  document.getElementById('long').value = lon;
   document.getElementById('latitude').innerHTML = lat;
   document.getElementById('longitude').innerHTML = lon;
   initialize();

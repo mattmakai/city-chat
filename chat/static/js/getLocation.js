@@ -1,10 +1,11 @@
 function initialize() {
   var mapCanvas = document.getElementById('map');
-  var latLng = new google.maps.LatLng(document.getElementById('latitude').value, document.getElementById('longitude').value);
+  var latLng = new google.maps.LatLng(document.getElementById('latitude').value, 
+                                      document.getElementById('longitude').value);
   var mapOptions = {
     center: latLng,
-  zoom: 16,
-  mapTypeId: google.maps.MapTypeId.ROADMAP
+    zoom: 16,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
   }
   var map = new google.maps.Map(mapCanvas, mapOptions);
   var marker = new google.maps.Marker({
@@ -28,8 +29,8 @@ function initialize() {
 function successFunction(position) {
   var lat = position.coords.latitude;
   var lon = position.coords.longitude;
-  document.getElementById('latitude').value = lat;
-  document.getElementById('longitude').value = lon;
+  document.getElementById('latitude').innerHTML = lat;
+  document.getElementById('longitude').innerHTML = lon;
   initialize();
 }
 

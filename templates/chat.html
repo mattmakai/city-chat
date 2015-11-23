@@ -3,15 +3,11 @@
 {% block content %}
   <h1>Neighborhood Chat</h1>
   <div id="map"></div>
-  <p>Latitude: <input type="text" id="latitude"></input></p>
-  <p>Longitude: <input type="text" id="longitude"></input></p>
-  <div id="chat">
-    <div class="connecting messages">
-    </div>
-    <div class="input connecting">
-      <form action="">
-        <input type="text" disabled placeholder="connecting..." />
-      </form>
-    </div>
-  </div>
+  <p>Latitude: <input type="text" id="latitude"></input> | 
+  Longitude: <input type="text" id="longitude"></input></p>
+
+  <section>
+    <div id="messages"></div>
+    <input id="chat-input" type="text" placeholder="say anything" autofocus/>
+  </section>
 {% endblock %}

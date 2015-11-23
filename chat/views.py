@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render
 
 from twilio.access_token import AccessToken, IpMessagingGrant
@@ -10,8 +10,8 @@ def main(request):
 
 
 def token(request):
-    device_id = 'abc'
-    identity = 'matt'
+    device_id = request.GET.get('device', 'unknown')
+    identity = request.GET.get('identity', 'guest')
     endpoint_id = "NeighborChat:{0}:{1}".format(device_id,identity)
     token = AccessToken(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_API_KEY,
                         settings.TWILIO_API_SECRET, identity)
@@ -19,4 +19,5 @@ def token(request):
     grant.service_sid = settings.TWILIO_IPM_SERVICE_SID
     grant.endpoint_id = endpoint_id
     token.add_grant(grant)
-    return HttpResponse(token.to_jwt())
+    response = {'identity': identity, 'token': token.to_jwt()}
+    return JsonResponse(response)

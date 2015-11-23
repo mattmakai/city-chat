@@ -12,6 +12,16 @@ function initialize() {
     map: map,
     title: 'Neighbor chat!'
   });
+  var chatRadius = new google.maps.Circle({
+      strokeColor: '#FF0000',
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: '#FF0000',
+      fillOpacity: 0.35,
+      map: map,
+      center: latLng,
+      radius: 250
+    });
 }
 
 
@@ -20,8 +30,6 @@ function successFunction(position) {
   var lon = position.coords.longitude;
   document.getElementById('latitude').value = lat;
   document.getElementById('longitude').value = lon;
-
-  console.log('Your latitude is :' + lat + ' and longitude is ' + lon);
   initialize();
 }
 
@@ -30,5 +38,4 @@ if (navigator.geolocation) {
 } else {
   alert('It seems like Geolocation, which is required for this page, is not enabled in your browser. Please use a browser which supports it.');
 }
-
 

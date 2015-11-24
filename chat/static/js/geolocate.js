@@ -11,7 +11,7 @@ function initialize() {
   var marker = new google.maps.Marker({
     position: latLng,
     map: map,
-    title: 'Neighbor chat!'
+    title: 'Your location'
   });
   var chatRadius = new google.maps.Circle({
       strokeColor: '#FF0000',
@@ -25,20 +25,15 @@ function initialize() {
     });
 }
 
-
-function successFunction(position) {
-  var lat = position.coords.latitude;
-  var lon = position.coords.longitude;
-  document.getElementById('lat').value = lat;
-  document.getElementById('long').value = lon;
-  document.getElementById('latitude').innerHTML = lat;
-  document.getElementById('longitude').innerHTML = lon;
+function positionFound(position) {
+  document.getElementById('lat').value = position.coords.latitude;
+  document.getElementById('long').value = position.coords.longitude;
   initialize();
 }
 
 if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(successFunction);
+  navigator.geolocation.getCurrentPosition(positionFound);
 } else {
-  alert('It seems like Geolocation, which is required for this page, is not enabled in your browser. Please use a browser which supports it.');
+  alert('It appears that required geolocation is not enabled in your browser.');
 }
 

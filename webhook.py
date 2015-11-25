@@ -23,5 +23,5 @@ if __name__ == "__main__":
         webhook_params = {"Webhooks.OnMessageSend.Url":
                           os.environ.get("NGROK_URL", "") + "/chat/message",
                           "Webhooks.OnMessageSend.Method": "POST",
-                          "Webhooks.OnMessageSend.Format": "JSON"}
+                          "Webhooks.OnMessageSend.Format": "XML"}
         set_webhook(webhook_params)

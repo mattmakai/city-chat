@@ -9,6 +9,10 @@ def main(request):
     return render(request, 'chat.html', {})
 
 
+def chat_message(request):
+    return JsonResponse({'body': request.POST.get('body', '')})
+
+
 def token(request):
     device_id = request.GET.get('device', 'unknown')
     identity = request.GET.get('identity', 'guest')

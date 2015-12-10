@@ -1,17 +1,10 @@
-// Get handle to the chat div 
 var $chatWindow = $('#messages');
-
-// Manages the state of our access token we got from the server
 var accessManager;
-
-// Our interface to the IP Messaging service
 var messagingClient;
-
-// A handle to the chat channel based on location
 var generalChannel;
-
-// The server will assign the client a username - stores that value
 var username;
+var userLocation;
+var city;
 
 // Helper function to print info messages to the chat window
 function print(infoMessage, asHtml) {
@@ -26,7 +19,7 @@ function print(infoMessage, asHtml) {
 
 // Helper function to print chat message to the chat window
 function printMessage(fromUser, message) {
-    var $user = $('<span class="username">').text(fromUser + ':');
+    var $user = $('<span class="username">').text(fromUser + ': ');
     if (fromUser === username) {
         $user.addClass('me');
     }
@@ -36,8 +29,7 @@ function printMessage(fromUser, message) {
     $chatWindow.append($container);
 }
 
-
-function initialize() {
+function drawMap() {
   var mapCanvas = document.getElementById('map');
   var latLng = new google.maps.LatLng(document.getElementById('lat').value, document.getElementById('long').value);
 
@@ -52,17 +44,15 @@ function initialize() {
     map: map,
     title: 'Your location'
   });
+}
 
+function initialize() {
+  drawMap();
   var latitude = $('#lat').val();
   var longitude = $('#long').val();
-  var username;
-  var city;
-
   $.getJSON('http://maps.googleapis.com/maps/api/geocode/json?latlng=' + latitude + ',' + longitude + '&sensor=true', {}, function(locationData) {
-    console.log(locationData);
-    console.log(locationData.results[0].formatted_address);
-    // Alert the user they have been assigned an address
-    username = locationData.results[0]["formatted_address"];
+    userLocation = locationData.results[0]["formatted_address"];
+    username = userLocation.replace(/\s/g, '_');
     city = locationData.results[0].address_components[3].long_name;
     createChat();
   });
@@ -70,16 +60,14 @@ function initialize() {
   function createChat() {
     $.getJSON('/token', {identity: username, device: 'browser'}, function(data) {
       print('It looks like you are near: ' 
-          + '<span class="me"><strong>' + username + '</strong></span>', true);
+          + '<span class="me"><strong>' + userLocation + '</strong></span>', true);
 
-      // Initialize the IP messaging client
       accessManager = new Twilio.AccessManager(data.token);
       messagingClient = new Twilio.IPMessaging.Client(accessManager);
 
-      // Get the general chat channel, which is where all the messages are
-      // sent in this simple application
-      var promise = messagingClient.getChannelByUniqueName('general');
+      var promise = messagingClient.getChannelByUniqueName(city);
       promise.then(function(channel) {
+          console.log(channel);
           generalChannel = channel;
           if (!generalChannel) {
               // If it doesn't exist, let's create it
@@ -89,7 +77,7 @@ function initialize() {
               }).then(function(channel) {
                   console.log('Created channel:');
                   console.log(channel);
-                  generalChannel = city;
+                  generalChannel = channel;
                   setupChannel();
               });
           } else {
@@ -99,11 +87,13 @@ function initialize() {
           }
       });
 
-      // Set up channel after it has been found
-      function setupChannel() {
+    });
+
+    // Set up channel after it has been found
+    function setupChannel() {
         // Join the general channel
         generalChannel.join().then(function(channel) {
-            print('Joined channel ' + city + ' as ' 
+            print('Joined channel "' + channel.uniqueName + '" as ' 
                 + '<span class="me">' + username + '</span>.', true);
         });
 
@@ -111,16 +101,15 @@ function initialize() {
         generalChannel.on('messageAdded', function(message) {
             printMessage(message.author, message.body);
         });
-      }
+    }
 
-      // Send a new message to the general channel
-      var $input = $('#chat-input');
-      $input.on('keydown', function(e) {
+    // Send a new message to the general channel
+    var $input = $('#chat-input');
+    $input.on('keydown', function(e) {
         if (e.keyCode == 13) {
             generalChannel.sendMessage($input.val())
             $input.val('');
         }
-      });
     });
   }
 }

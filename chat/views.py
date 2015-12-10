@@ -11,7 +11,7 @@ def chat(request):
 
 def token(request):
     device_id = request.GET.get('device', 'unknown')
-    identity = request.GET.get('identity', 'guest')
+    identity = request.GET.get('identity', 'guest').encode('utf-8')
     endpoint_id = "NeighborChat:{0}:{1}".format(device_id,identity)
     token = AccessToken(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_API_KEY,
                         settings.TWILIO_API_SECRET, identity)

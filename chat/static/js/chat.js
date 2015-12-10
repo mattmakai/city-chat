@@ -30,7 +30,7 @@ function printMessage(fromUser, message) {
 }
 
 // creates the map based on user's browser location 
-function drawMap() {
+function drawMap(position) {
   document.getElementById('lat').value = position.coords.latitude;
   document.getElementById('long').value = position.coords.longitude;
   var mapCanvas = document.getElementById('map');
@@ -50,8 +50,8 @@ function drawMap() {
 }
 
 
-function mapAndChat() {
-  drawMap();
+function mapAndChat(position) {
+  drawMap(position);
   chatBasedOnCity();
 }
 
@@ -78,7 +78,6 @@ function createChat() {
 
     var promise = messagingClient.getChannelByUniqueName(city);
     promise.then(function(channel) {
-        console.log(channel);
         cityChannel = channel;
         if (!cityChannel) {
             // If channel does not exist then create it

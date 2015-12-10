@@ -1,2 +1,2 @@
-django==1.8.7
-twilio==5.0.dev1
+django==1.9
+twilio==5.0.0

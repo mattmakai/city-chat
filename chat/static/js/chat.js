@@ -1,7 +1,7 @@
 var $chatWindow = $('#messages');
 var accessManager;
 var messagingClient;
-var generalChannel;
+var cityChannel;
 var username;
 var userLocation;
 var city;
@@ -31,6 +31,8 @@ function printMessage(fromUser, message) {
 
 // creates the map based on user's browser location 
 function drawMap() {
+  document.getElementById('lat').value = position.coords.latitude;
+  document.getElementById('long').value = position.coords.longitude;
   var mapCanvas = document.getElementById('map');
   var latLng = new google.maps.LatLng(document.getElementById('lat').value, document.getElementById('long').value);
 
@@ -48,7 +50,7 @@ function drawMap() {
 }
 
 
-function initialize() {
+function mapAndChat() {
   drawMap();
   chatBasedOnCity();
 }
@@ -77,37 +79,35 @@ function createChat() {
     var promise = messagingClient.getChannelByUniqueName(city);
     promise.then(function(channel) {
         console.log(channel);
-        generalChannel = channel;
-        if (!generalChannel) {
-            // If it doesn't exist, let's create it
+        cityChannel = channel;
+        if (!cityChannel) {
+            // If channel does not exist then create it
             messagingClient.createChannel({
                 uniqueName: city,
                 friendlyName: city
             }).then(function(channel) {
                 console.log('Created channel:');
                 console.log(channel);
-                generalChannel = channel;
+                cityChannel = channel;
                 setupChannel();
             });
         } else {
             console.log('Found channel:');
-            console.log(generalChannel);
+            console.log(cityChannel);
             setupChannel();
         }
     });
 
   });
 
-  // Set up channel after it has been found
   function setupChannel() {
       // Join the general channel
-      generalChannel.join().then(function(channel) {
+      cityChannel.join().then(function(channel) {
           print('Joined channel "' + channel.uniqueName + '" as ' 
               + '<span class="me">' + username + '</span>.', true);
       });
-
       // Listen for new messages sent to the channel
-      generalChannel.on('messageAdded', function(message) {
+      cityChannel.on('messageAdded', function(message) {
           printMessage(message.author, message.body);
       });
   }
@@ -116,20 +116,14 @@ function createChat() {
   var $input = $('#chat-input');
   $input.on('keydown', function(e) {
       if (e.keyCode == 13) {
-          generalChannel.sendMessage($input.val())
+          cityChannel.sendMessage($input.val())
           $input.val('');
       }
   });
 }
 
-function positionFound(position) {
-  document.getElementById('lat').value = position.coords.latitude;
-  document.getElementById('long').value = position.coords.longitude;
-  initialize();
-}
-
 if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(positionFound);
+  navigator.geolocation.getCurrentPosition(mapAndChat);
 } else {
-  alert('It appears that required geolocation is not enabled in your browser.');
+  alert('It appears that required browser geolocation is not enabled.');
 }

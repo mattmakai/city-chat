@@ -6,7 +6,7 @@ from twilio.access_token import AccessToken, IpMessagingGrant
 
 
 def chat(request):
-    return render(request, 'chat.html', {})
+    return render(request, 'chat.html')
 
 
 def token(request):

@@ -29,6 +29,13 @@ function printMessage(fromUser, message) {
     $chatWindow.append($container);
 }
 
+
+function positionFound(position) {
+  document.getElementById('lat').value = position.coords.latitude;
+  document.getElementById('long').value = position.coords.longitude;
+  mapAndChat();
+}
+
 // creates the map based on user's browser location 
 function drawMap() {
   var mapCanvas = document.getElementById('map');
@@ -47,17 +54,10 @@ function drawMap() {
   });
 }
 
-function positionFound(position) {
-  document.getElementById('lat').value = position.coords.latitude;
-  document.getElementById('long').value = position.coords.longitude;
-  mapAndChat();
-}
-
 function mapAndChat() {
   drawMap();
   chatBasedOnCity();
 }
-
 
 function chatBasedOnCity() {
   var latitude = $('#lat').val();
@@ -99,7 +99,6 @@ function createChat() {
             setupChannel();
         }
     });
-
   });
 
   function setupChannel() {
@@ -127,5 +126,5 @@ function createChat() {
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(positionFound);
 } else {
-  alert('It appears that required browser geolocation is not enabled.');
+  alert('It appears that required geolocation is not enabled in your browser.');
 }
